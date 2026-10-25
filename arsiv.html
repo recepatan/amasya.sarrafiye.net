@@ -297,7 +297,7 @@ $(document).ready(function() {
     <div style="width:100%; display:flex; justify-content:space-between; align-items:center;"> 
         <div class="logo-area"> 
             <a href="/" id="navHomeLink" title="Altın Fiyatları">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgKIm4G4h8xKEx4_d_TC4ha94mbm5IabqOc_eOxtzQph6MRjMNm5LWLAWl0_PMoKHrcOrEsuOwcH_9LAh2pSXbcV9UYJqBOVdLiJhXqsLj8xjJ_6QPZ97jf6QkbCt5koigR37IivmKenzqzauFSOfs27urswGlQJUzcCGqHOvrkYvvpKiDHavLwo5THJKQ=s175" class="logo-img" id="navLogoImg" alt="Altın Fiyatları Logo"> 
+                <img src="" class="logo-img" id="navLogoImg" alt="Altın Fiyatları Logo"> 
             </a>
             <div class="theme-bar"> 
                <a href="/" class="live-btn" id="navLiveBtn" title="Canlı Piyasa Ekranına Dön">
@@ -416,7 +416,7 @@ $(document).ready(function() {
     <div class="sarrafiye-bilesen-content" id="sarrafiyeContent">
       <ul class="sarrafiye-bilesen-links">
         <li><a href="https://adana.sarrafiye.net" title="Adana Altın Fiyatları">Adana Altın Fiyatları</a></li>
-        <li><a href="https://amasya.sarrafiye.net" title="Amasya Sarraflar">Amasya Sarraflar</a></li>
+        <li><a href="https://amasya.sarrafiye.net" title="Amasya Altın Fiyatları">Amasya Altın Fiyatları</a></li>
         <li><a href="https://bingol.sarrafiye.net" title="Bingöl Altın Fiyatları">Bingöl Altın Fiyatları</a></li>
         <li><a href="https://bursa.sarrafiye.net" title="Bursa Altın Fiyatları">Bursa Altın Fiyatları</a></li>
         <li><a href="https://diyarbakir.sarrafiye.net" title="Diyarbakır Altın Fiyatları">Diyarbakır Altın Fiyatları</a></li>
@@ -484,7 +484,10 @@ $(document).ready(function() {
       if (navHomeLink) navHomeLink.title = `${currentCityDisplayName} Altın Fiyatları`;
       
       const navLogoImg = document.getElementById('navLogoImg');
-      if (navLogoImg) navLogoImg.alt = `${currentCityDisplayName} Altın Fiyatları Logo`;
+      if (navLogoImg) {
+        navLogoImg.src = `/${currentCitySlug}-altin-fiyatlari.png`;
+        navLogoImg.alt = `${currentCityDisplayName} Altın Fiyatları Logo`;
+      }
       
       const navLiveBtn = document.getElementById('navLiveBtn');
       if (navLiveBtn) navLiveBtn.title = `${currentCityDisplayName} Altın Fiyatları Canlı Piyasa Ekranına Dön`;
