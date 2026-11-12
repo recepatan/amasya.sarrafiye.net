@@ -676,18 +676,6 @@ $(document).ready(function() {
       return [`${year}-${month}-${day}`, `${day}.${month}.${year}`, `${day}-${month}-${year}`, `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`];
     }
 
-    // Y eksenini anlık en düşük ve en yüksek fiyat aralığına tam oturtan ve 1-2 TL'lik değişimleri belirginleştiren ölçek
-    function getTightZoomYAxisConfig() {
-      return {
-        grid: { color: 'rgba(255,255,255,0.1)' },
-        ticks: {
-          color: '#ccc',
-          font: { size: 10 },
-          callback: function(value) { return fmt(value) + ' TL'; }
-        }
-      };
-    }
-
     function parseGoogleSheetsData(values) {
       if (!values || !Array.isArray(values)) return null;
       const products = {};
@@ -814,7 +802,7 @@ $(document).ready(function() {
               borderWidth: 2,
               fill: false,
               tension: 0.15,
-              pointRadius: 2
+              pointRadius: 3
             },
             {
               label: `Alış (TL)`,
@@ -824,7 +812,7 @@ $(document).ready(function() {
               borderWidth: 2,
               fill: false,
               tension: 0.15,
-              pointRadius: 2
+              pointRadius: 3
             }
           ]
         },
@@ -840,8 +828,18 @@ $(document).ready(function() {
             }
           },
           scales: {
-            x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getTightZoomYAxisConfig()
+            x: { 
+              grid: { display: false }, 
+              ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } 
+            },
+            y: { 
+              grid: { color: 'rgba(255,255,255,0.1)' }, 
+              ticks: { 
+                color: '#ccc', 
+                font: { size: 10 }, 
+                callback: function(value) { return fmt(value) + ' TL'; } 
+              } 
+            }
           }
         }
       });
@@ -892,22 +890,24 @@ $(document).ready(function() {
       const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
       const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
 
+      // Yeni veri noktası her zaman sağa eklenir, eski veri sola kayması için max sınır aşımında shift edilir
       priceChart.data.labels.push(timeStr);
       priceChart.data.datasets[0].data.push(calcSatis);
       priceChart.data.datasets[1].data.push(calcAlis);
 
-      if (priceChart.data.labels.length > 300) {
+      // Ekranda en fazla 30 nokta görünsün; yenisi geldikçe soldakiler silinerek akışkan sola kayma sağlanır
+      if (priceChart.data.labels.length > 30) {
         priceChart.data.labels.shift();
         priceChart.data.datasets[0].data.shift();
         priceChart.data.datasets[1].data.shift();
       }
 
-      // Aktif veri setine göre Y eksenini otomatik sıkılaştırıp dalgalanmaları belirginleştir
+      // Y eksenini anlık en düşük ve en yüksek fiyat aralığına tam kilitleyip dalgalanmaları belirginleştir
       const allValues = [...priceChart.data.datasets[0].data, ...priceChart.data.datasets[1].data];
       if (allValues.length > 0) {
         const minVal = Math.min(...allValues);
         const maxVal = Math.max(...allValues);
-        const padding = Math.max(2, (maxVal - minVal) * 0.2); // Çok dar aralıkta bile nefes payı bırakır
+        const padding = Math.max(3, (maxVal - minVal) * 0.4); 
         priceChart.options.scales.y.min = Math.floor(minVal - padding);
         priceChart.options.scales.y.max = Math.ceil(maxVal + padding);
       }
@@ -1223,7 +1223,7 @@ $(document).ready(function() {
               borderWidth: 2,
               fill: false,
               tension: 0.15,
-              pointRadius: sliceData.length > 90 ? 0 : 2
+              pointRadius: sliceData.length > 90 ? 0 : 3
             },
             {
               label: `Alış (TL)`,
@@ -1233,7 +1233,7 @@ $(document).ready(function() {
               borderWidth: 2,
               fill: false,
               tension: 0.15,
-              pointRadius: sliceData.length > 90 ? 0 : 2
+              pointRadius: sliceData.length > 90 ? 0 : 3
             }
           ]
         },
@@ -1250,7 +1250,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getTightZoomYAxisConfig()
+            y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#ccc', font: { size: 10 }, callback: function(value) { return fmt(value) + ' TL'; } } }
           }
         }
       });
