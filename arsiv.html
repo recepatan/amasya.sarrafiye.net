@@ -819,6 +819,7 @@ $(document).ready(function() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false, // Akışkanlık için animasyon kapatıldı, doğrudan sağa eklenip sola kayar
           plugins: {
             legend: { position: 'top', labels: { color: '#fff', font: { size: 10 } } },
             tooltip: { 
@@ -830,7 +831,7 @@ $(document).ready(function() {
           scales: {
             x: { 
               grid: { display: false }, 
-              ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } 
+              ticks: { maxTicksLimit: 10, color: '#ccc', font: { size: 10 } } 
             },
             y: { 
               grid: { color: 'rgba(255,255,255,0.1)' }, 
@@ -890,24 +891,25 @@ $(document).ready(function() {
       const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
       const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
 
-      // Yeni veri noktası her zaman sağa eklenir, eski veri sola kayması için max sınır aşımında shift edilir
+      // --- TAHTAYA YAZAR GİBİ SAĞA EKLEME VE SOLA KAYDIRMA MANTIĞI ---
       priceChart.data.labels.push(timeStr);
       priceChart.data.datasets[0].data.push(calcSatis);
       priceChart.data.datasets[1].data.push(calcAlis);
 
-      // Ekranda en fazla 30 nokta görünsün; yenisi geldikçe soldakiler silinerek akışkan sola kayma sağlanır
-      if (priceChart.data.labels.length > 30) {
+      // Ekranı dolduracak maksimum nokta sayısı (Örn: 25 nokta). Dolunca soldan silinir, sağa eklenerek sola akar.
+      const MAX_POINTS = 25;
+      if (priceChart.data.labels.length > MAX_POINTS) {
         priceChart.data.labels.shift();
         priceChart.data.datasets[0].data.shift();
         priceChart.data.datasets[1].data.shift();
       }
 
-      // Y eksenini anlık en düşük ve en yüksek fiyat aralığına tam kilitleyip dalgalanmaları belirginleştir
+      // Y eksenini anlık en düşük ve en yüksek değere daraltarak 1-2 TL'lik değişimleri devasa gösterir
       const allValues = [...priceChart.data.datasets[0].data, ...priceChart.data.datasets[1].data];
       if (allValues.length > 0) {
         const minVal = Math.min(...allValues);
         const maxVal = Math.max(...allValues);
-        const padding = Math.max(3, (maxVal - minVal) * 0.4); 
+        const padding = Math.max(3, (maxVal - minVal) * 0.5); 
         priceChart.options.scales.y.min = Math.floor(minVal - padding);
         priceChart.options.scales.y.max = Math.ceil(maxVal + padding);
       }
