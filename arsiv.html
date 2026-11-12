@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-tttlelöfkkddk
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="content-language" content="tr">
@@ -9,7 +8,7 @@ tttlelöfkkddk
 <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 <link rel="canonical" id="canonicalUrl" href=""/>
 <meta content="#fd3a13" name="theme-color"/>
-<meta content="Kuyumcu esnaflarından derlenen altın fiyatları arşivi için web sitemizi ziyaret edebilirsiniz." id="metaDescription" name="description"/>
+<meta content="Kuyumcu esnafından derlenen altın fiyatları arşivi için web sitemizi ziyaret edebilirsiniz." id="metaDescription" name="description"/>
 <meta property="og:locale" content="tr_TR"/>
 <meta property="og:type" content="website"/>
 <meta property="og:title" id="ogTitle" content="Altın Fiyatları Arşivi"/>
@@ -820,7 +819,7 @@ $(document).ready(function() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: false, // Akışkanlık için animasyon kapatıldı, doğrudan sağa eklenip sola kayar
+          animation: false,
           plugins: {
             legend: { position: 'top', labels: { color: '#fff', font: { size: 10 } } },
             tooltip: { 
@@ -892,12 +891,11 @@ $(document).ready(function() {
       const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
       const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
 
-      // --- TAHTAYA YAZAR GİBİ SAĞA EKLEME VE SOLA KAYDIRMA MANTIĞI ---
+      // Sağdan ekleme ve sola kaydırma mantığı
       priceChart.data.labels.push(timeStr);
       priceChart.data.datasets[0].data.push(calcSatis);
       priceChart.data.datasets[1].data.push(calcAlis);
 
-      // Ekranı dolduracak maksimum nokta sayısı (Örn: 25 nokta). Dolunca soldan silinir, sağa eklenerek sola akar.
       const MAX_POINTS = 25;
       if (priceChart.data.labels.length > MAX_POINTS) {
         priceChart.data.labels.shift();
@@ -905,12 +903,16 @@ $(document).ready(function() {
         priceChart.data.datasets[1].data.shift();
       }
 
-      // Y eksenini anlık en düşük ve en yüksek değere daraltarak 1-2 TL'lik değişimleri devasa gösterir
+      // --- DİKEY ARALIĞI DARALTARAK DEĞİŞİMLERİ HEMEN BELLİ EDEN GÜNCELLENMİŞ ÖLÇEK MANTIĞI ---
       const allValues = [...priceChart.data.datasets[0].data, ...priceChart.data.datasets[1].data];
       if (allValues.length > 0) {
         const minVal = Math.min(...allValues);
         const maxVal = Math.max(...allValues);
-        const padding = Math.max(3, (maxVal - minVal) * 0.5); 
+        
+        // Veriler arası fark azsa veya ilk 2 veride düz çizgi görünmemesi için hassas pay
+        const diff = maxVal - minVal;
+        const padding = diff === 0 ? 2 : Math.max(2, diff * 0.3); 
+        
         priceChart.options.scales.y.min = Math.floor(minVal - padding);
         priceChart.options.scales.y.max = Math.ceil(maxVal + padding);
       }
