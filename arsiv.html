@@ -366,7 +366,7 @@ $(document).ready(function() {
     <div id="status" class="status-msg">Veriler ve arşiv yükleniyor...</div>    
     <div id="results" style="display: none; width: 100%; height: 100%; flex-direction: column; min-height:0;">      
         <div class="layout-wrapper">
-            <!-- 1. ALAN: Grafik و Altında Dinamik Bilgi Kartı -->
+            <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
             <div class="left-column">
                 <div class="chart-box">
                     <div class="chart-header">
@@ -597,7 +597,7 @@ $(document).ready(function() {
     let selectedProductKey = 'KUR';
     let socket = null;
     window.isLiveSocketActive = false;
-    let liveChartInitialized = false; // Canlı grafik boş başlatıldı mı kontrolü
+    let liveChartInitialized = false;
 
     const datePicker = document.getElementById('datePicker');
     const timeSelect = document.getElementById('timeSelect');
@@ -676,6 +676,19 @@ $(document).ready(function() {
       return [`${year}-${month}-${day}`, `${day}.${month}.${year}`, `${day}-${month}-${year}`, `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`];
     }
 
+    // Y ekseninin çok dar aralığa sıkışıp alış-satış çizgilerini aşırı uzaklaştırmasını önleyen ölçek ayarı
+    function getBalancedYAxisConfig() {
+      return {
+        grid: { color: 'rgba(255,255,255,0.1)' },
+        grace: '45%', // Üst ve alt boşluk tamponu ekleyerek makas çizgilerini birbirine yakın ve paralel tutar
+        ticks: {
+          color: '#ccc',
+          font: { size: 10 },
+          callback: function(value) { return fmt(value) + ' TL'; }
+        }
+      };
+    }
+
     function parseGoogleSheetsData(values) {
       if (!values || !Array.isArray(values)) return null;
       const products = {};
@@ -740,7 +753,7 @@ $(document).ready(function() {
 
         if (urlParams.tip === 'canli') {
           window.isLiveSocketActive = true;
-          archiveData = []; // Canlı modda arşiv verisi kullanılmaz, sıfırdan başlanır
+          archiveData = [];
           datePicker.disabled = true;
           
           statusDiv.style.display = 'none';
@@ -798,20 +811,20 @@ $(document).ready(function() {
               label: `Satış (TL)`,
               data: [],
               borderColor: '#d97706',
-              backgroundColor: 'rgba(217, 119, 6, 0.1)',
+              backgroundColor: 'rgba(217, 119, 6, 0.08)',
               borderWidth: 2,
-              fill: true,
-              tension: 0.3,
+              fill: false,
+              tension: 0.2,
               pointRadius: 3
             },
             {
               label: `Alış (TL)`,
               data: [],
               borderColor: '#2563eb',
-              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              backgroundColor: 'rgba(37, 99, 235, 0.08)',
               borderWidth: 2,
-              fill: true,
-              tension: 0.3,
+              fill: false,
+              tension: 0.2,
               pointRadius: 3
             }
           ]
@@ -829,7 +842,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#ccc', font: { size: 10 }, callback: function(value) { return fmt(value) + ' TL'; } } }
+            y: getBalancedYAxisConfig()
           }
         }
       });
@@ -870,10 +883,8 @@ $(document).ready(function() {
       var z = document.getElementById('fiyat_zaman_doviz');
       if(z) z.innerText = timeStr;
 
-      // Tabloları güncelle
       updateTablesOnly(h_al, h_sat);
 
-      // Canlı grafiğe yeni noktayı ekle
       if (!liveChartInitialized || !priceChart) {
         initEmptyLiveChart();
       }
@@ -883,8 +894,8 @@ $(document).ready(function() {
       const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
 
       priceChart.data.labels.push(timeStr);
-      priceChart.data.datasets[0].data.push(calcSatis); // Satış (Index 0)
-      priceChart.data.datasets[1].data.push(calcAlis);  // Alış (Index 1)
+      priceChart.data.datasets[0].data.push(calcSatis);
+      priceChart.data.datasets[1].data.push(calcAlis);
 
       if (priceChart.data.labels.length > 300) {
         priceChart.data.labels.shift();
@@ -1199,20 +1210,20 @@ $(document).ready(function() {
               label: `Satış (TL)`,
               data: satisData,
               borderColor: '#d97706',
-              backgroundColor: 'rgba(217, 119, 6, 0.1)',
+              backgroundColor: 'rgba(217, 119, 6, 0.08)',
               borderWidth: 2,
-              fill: true,
-              tension: 0.3,
+              fill: false,
+              tension: 0.2,
               pointRadius: sliceData.length > 90 ? 0 : 3
             },
             {
               label: `Alış (TL)`,
               data: alisData,
               borderColor: '#2563eb',
-              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              backgroundColor: 'rgba(37, 99, 235, 0.08)',
               borderWidth: 2,
-              fill: true,
-              tension: 0.3,
+              fill: false,
+              tension: 0.2,
               pointRadius: sliceData.length > 90 ? 0 : 3
             }
           ]
@@ -1230,7 +1241,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#ccc', font: { size: 10 }, callback: function(value) { return fmt(value) + ' TL'; } } }
+            y: getBalancedYAxisConfig()
           }
         }
       });
