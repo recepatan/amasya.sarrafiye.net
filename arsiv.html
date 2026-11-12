@@ -58,51 +58,45 @@
   #tarih_alan{font-size:clamp(12px, 1.2vw, 16px);font-weight:bold;color:white;}
   #fiyat_zaman_doviz{font-size:clamp(14px, 1.5vw, 20px);font-weight:bold;color:var(--border);}
   
-  .main-content{flex:1 0 auto;display:flex;flex-direction:column;padding:10px 10px 5px 10px;gap:10px;max-width:1400px;margin:0 auto;width:100%;min-height:calc(100vh - 65px);}
+  .main-content{flex:1 0 auto;display:flex;flex-direction:column;padding:10px 10px 5px 10px;gap:8px;max-width:1400px;margin:0 auto;width:100%;min-height:calc(100vh - 65px);}
   .layout-wrapper{display:flex;gap:15px;width:100%;flex:1;align-items:stretch;}
-  .left-column{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;justify-content:space-between;}
-  .right-column{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;justify-content:space-between;}
+  .left-column{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;justify-content:space-between;}
+  .right-column{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;justify-content:space-between;}
   
-  .chart-box{background:rgba(255, 255, 255, 0.03);border:2px solid var(--main);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;flex:1;min-height:300px;}
+  .chart-box{background:rgba(255, 255, 255, 0.03);border:2px solid var(--main);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;flex:1;min-height:280px;}
   .table-container-box{background:rgba(255, 255, 255, 0.03);border:2px solid var(--main);border-radius:8px;padding:6px;display:flex;flex-direction:column;flex:1;overflow:hidden;}
   
-  /* Çakışmayı önleyen güvenli dikey orta reklam konteynırı */
-  .ad-column-middle {
+  .ad-container-shared {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
     background-color: transparent;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 0 0 auto;
-    min-height: 0;
+    width: 100%;
+    margin: 4px 0;
+    flex-shrink: 0;
   }
-  .ad-column-middle:empty {
+  .ad-container-shared:empty {
     display: none !important;
   }
-  @media (min-width: 901px) {
-    .ad-column-middle:not(:empty) {
+  @media (min-width: 769px) {
+    .ad-container-shared:not(:empty) {
       border: 1px solid var(--border);
       background-color: #111827;
-      padding: 6px;
-      max-width: 320px;
+      min-height: 80px;
     }
   }
-  @media (max-width: 900px) {
-    .ad-column-middle:not(:empty) {
-      width: 100%;
-      margin: 4px 0;
-    }
-  }
-
   .mobile-extra-ad {
     width: 100%;
-    margin: 6px 0;
+    margin: 4px 0;
     display: flex;
     justify-content: center;
     flex-shrink: 0;
+  }
+  .mobile-extra-ad:empty {
+    display: none !important;
   }
 
   .ayar-table,.has-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--main);border-radius:6px;overflow:hidden;font-weight:bold;table-layout:fixed;flex:1;}
@@ -125,11 +119,11 @@
   .time-filter-group{display:flex;gap:3px;flex-wrap:wrap;}
   .time-btn{background-color:rgba(255,255,255,0.1);border:1px solid var(--border);color:#fff;padding:3px 7px;border-radius:4px;font-size:clamp(10px, 0.85vw, 13px);font-weight:bold;cursor:pointer;}
   .time-btn:hover,.time-btn.active{background-color:var(--main);color:#ffffff;}
-  .chart-container{position:relative;width:100%;flex:1;min-height:220px;background:rgba(0,0,0,0.2);border-radius:6px;padding:4px;}
+  .chart-container{position:relative;width:100%;flex:1;min-height:200px;background:rgba(0,0,0,0.2);border-radius:6px;padding:4px;}
   
   .seo-info-card{padding:8px 12px;background:rgba(0, 0, 0, 0.5);border:1px solid var(--border);border-left:4px solid var(--main);border-radius:6px;flex-shrink:0;}
   .seo-info-card h2{font-size:clamp(12px, 1.1vw, 15px);color:var(--border) !important;margin-bottom:3px;font-weight:bold;}
-  .seo-info-card p{font-size:clamp(11px, 0.9vw, 13px);line-height:1.3;color:#ffffff !important;margin-bottom:5px;opacity:1 !important;}
+  .seo-info-card p{font-size:clamp(11px, 0.9vw, 13px);line-height:1.3;color:#ffffff !important;margin-bottom:4px;opacity:1 !important;}
   .seo-stats-badge{display:flex;gap:10px;padding:4px 8px;background:rgba(255, 255, 255, 0.1);border-radius:4px;font-size:clamp(10px, 0.85vw, 12px);flex-wrap:wrap;color:#ffffff !important;font-weight:bold;}
   .status-msg{padding:20px;text-align:center;color:#fff;font-size:1.2vw;background:rgba(0,0,0,0.4);border-radius:8px;margin:auto;}
   .error-msg{color:#f87171;}
@@ -137,7 +131,7 @@
   @media only screen and (max-width: 900px){
     .layout-wrapper{flex-direction:column;align-items:stretch;}
     .left-column,.right-column{width:100%;flex:none;height:auto;}
-    .chart-container{height:250px;}
+    .chart-container{height:220px;}
     .ayar-table,.has-table{flex:none;}
   }
   
@@ -163,14 +157,14 @@
   .mobile-footer {
     flex-shrink: 0;
     display: block;
-    padding: 10px 15px 12px 15px;
-    margin-top: 6px;
+    padding: 8px 15px 10px 15px;
+    margin-top: 4px;
     text-align: center;
     background: rgba(0, 0, 0, 0.4);
     border-top: 1px solid var(--border);
     color: #b0b3b8;
     font-size: 12px;
-    line-height: 1.4;
+    line-height: 1.3;
     width: 100%;
   }
   body:not(.dark-mode) .mobile-footer {
@@ -178,9 +172,9 @@
     border-top: 1px solid #dadce0;
     color: #5f6368;
   }
-  .mobile-footer-seo { margin-bottom: 4px; }
+  .mobile-footer-seo { margin-bottom: 2px; }
   .mobile-footer-seo strong { color: var(--border); }
-  .mobile-footer-copy { font-size: 11px; font-weight: 600; opacity: 0.8; margin-bottom: 6px; }
+  .mobile-footer-copy { font-size: 11px; font-weight: 600; opacity: 0.8; margin-bottom: 4px; }
 
   .sarrafiye-bilesen {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -188,14 +182,14 @@
     border-radius: 6px;
     overflow: hidden;
     max-width: 1200px;
-    margin: 6px auto 0 auto;
+    margin: 4px auto 0 auto;
     background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     text-align: left;
   }
   .sarrafiye-bilesen-btn {
     width: 100%;
-    padding: 8px 12px;
+    padding: 6px 12px;
     background-color: #f8f9fa;
     color: #333333;
     font-size: 13px;
@@ -227,11 +221,11 @@
   }
   .sarrafiye-bilesen-links {
     list-style: none;
-    padding: 10px 12px;
+    padding: 8px 12px;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 6px 10px;
+    gap: 4px 10px;
     border-top: 1px solid #eeeeee;
   }
   .sarrafiye-bilesen-links a {
@@ -332,7 +326,7 @@ $(document).ready(function() {
     <div id="status" class="status-msg">Veriler ve arşiv yükleniyor...</div>    
     <div id="results" style="display: none; width: 100%; height: 100%; flex-direction: column;">      
         <div class="layout-wrapper">
-            <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
+            <!-- Sol Kolon: Grafik, Tarih Filtresi, SEO Kartı -->
             <div class="left-column">
                 <div class="chart-box">
                     <div class="chart-header">
@@ -386,10 +380,7 @@ $(document).ready(function() {
                 </article>
             </div>
             
-            <!-- 2. ALAN: Dikey Orta Reklam Alanı (reklam.json: ad_kutu2) - Reklam yoksa gizli kalır -->
-            <div class="ad-column-middle" id="ad-slot-kutu2"></div>
-
-            <!-- 3. ALAN: Kur ve Ürünler Tabloları -->
+            <!-- Sağ Kolon: Kur Tablosu, kutu2 Reklam Alanı ve Ürünler Tablosu Arasında -->
             <div class="right-column">
                 <div class="table-container-box" style="flex: 0 0 auto;">
                     <table class="has-table">
@@ -397,6 +388,9 @@ $(document).ready(function() {
                         <tbody id="marketTableBody"></tbody>
                     </table>
                 </div>
+
+                <!-- kutu2 Reklam Alanı: İki Tablonun Arasında -->
+                <div class="ad-container-shared" id="ad-slot-kutu2"></div>
 
                 <div class="table-container-box" style="flex: 1;">
                     <table class="ayar-table">
