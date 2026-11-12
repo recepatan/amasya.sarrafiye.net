@@ -8,7 +8,7 @@
 <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 <link rel="canonical" id="canonicalUrl" href=""/>
 <meta content="#fd3a13" name="theme-color"/>
-<meta content="Kuyumcu esnafından derlenen altın fiyatları arşivi için web sitemizi ziyaret edebilirsiniz." id="metaDescription" name="description"/>
+<meta content="Kuyumcu esnaflarından derlenen altın fiyatları arşivi için web sitemizi ziyaret edebilirsiniz." id="metaDescription" name="description"/>
 <meta property="og:locale" content="tr_TR"/>
 <meta property="og:type" content="website"/>
 <meta property="og:title" id="ogTitle" content="Altın Fiyatları Arşivi"/>
@@ -372,9 +372,9 @@ $(document).ready(function() {
                     <div class="chart-header">
                         <div class="chart-title" id="chartTitle">Fiyat Trend Grafiği</div>
                         <div class="time-filter-group">
-                            <button class="time-btn active" onclick="setChartRange('today', event)">1G</button>
+                            <button class="time-btn" onclick="setChartRange('today', event)">1G</button>
                             <button class="time-btn" onclick="setChartRange('week', event)">1H</button>
-                            <button class="time-btn" onclick="setChartRange('month', event)">1A</button>
+                            <button class="time-btn active" onclick="setChartRange('month', event)">1A</button>
                             <button class="time-btn" onclick="setChartRange('year', event)">1Y</button>
                             <button class="time-btn" onclick="setChartRange('all', event)">5Y</button>
                             <button class="time-btn" onclick="toggleFullScreen()" title="Tam Ekran Yap/Çık"><i class="bi bi-arrows-fullscreen"></i></button>
@@ -747,7 +747,11 @@ $(document).ready(function() {
 
         if (urlParams.tip === 'canli') {
           window.isLiveSocketActive = true;
-          currentRange = 'month'; // Canlı modda varsayılan olarak son 30 günlük verinin üzerine eklensin diye 1A (month) seçilir
+          currentRange = 'month'; // Canlı modda varsayılan olarak son 30 günlük veriyi getir
+          document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+          const monthBtn = Array.from(document.querySelectorAll('.time-btn')).find(b => b.getAttribute('onclick')?.includes('month'));
+          if (monthBtn) monthBtn.classList.add('active');
+
           if (archiveData.length > 0) {
             const lastItem = archiveData[archiveData.length - 1];
             targetDate = normalizeToISO(lastItem.tarih || lastItem.date || lastItem.Tarih);
@@ -817,7 +821,7 @@ $(document).ready(function() {
       var lastItem = archiveData[archiveData.length - 1];
       var currentDate = lastItem ? normalizeToISO(lastItem.tarih || lastItem.date || lastItem.Tarih) : new Date().toISOString().split('T')[0];
 
-      // Yeni canlı veriyi arşiv dizisine anlık ekle
+      // Gelen canlı veriyi arşiv dizisinin sonuna yeni kayıt olarak ekle (30 günlük verinin üzerine eklenmeye devam eder)
       var newRecord = {
         tarih: currentDate,
         saat: timeStr,
@@ -827,36 +831,9 @@ $(document).ready(function() {
       archiveData.push(newRecord);
       currentRecordIndex = archiveData.length - 1;
 
-      // Tabloları güncelle
+      // Tabloları ve grafiği güncelle
       updateTablesOnly(h_al, h_sat);
-
-      // Grafik açıkken ve 'today' modundaysa doğrudan sağa ekleyip kaydır; 30 günlük (month) görünümde ise renderChart ile güncelle
-      if (priceChart && currentRange === 'today') {
-        const selectedProd = selectedProductKey === 'KUR' ? null : multipliers[selectedProductKey];
-        const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
-
-        priceChart.data.labels.push(timeStr);
-        priceChart.data.datasets[0].data.push(calcSatis);
-
-        if (priceChart.data.labels.length > 30) {
-          priceChart.data.labels.shift();
-          priceChart.data.datasets[0].data.shift();
-        }
-
-        const allValues = priceChart.data.datasets[0].data;
-        if (allValues.length > 0) {
-          const minVal = Math.min(...allValues);
-          const maxVal = Math.max(...allValues);
-          const diff = maxVal - minVal;
-          const padding = diff === 0 ? 2 : Math.max(2, diff * 0.4); 
-          priceChart.options.scales.y.min = Math.floor(minVal - padding);
-          priceChart.options.scales.y.max = Math.ceil(maxVal + padding);
-        }
-
-        priceChart.update('none');
-      } else {
-        renderChart();
-      }
+      renderChart();
 
       updatePageSEO(currentDate, timeStr, h_al, h_sat);
     }
@@ -950,15 +927,21 @@ $(document).ready(function() {
       const targetIsoDate = targetDateIso;
       const daySlice = archiveData.filter(item => normalizeToISO(item.tarih || item.date || item.Tarih) === targetIsoDate);
       
+      let dayBuyVals = [];
       let daySellVals = [];
       daySlice.forEach(item => {
+        let b = parseFloat(String(item.alis || item.buy || item.Alis || 0).replace(',', '.'));
         let s = parseFloat(String(item.satis || item.sell || item.Satis || 0).replace(',', '.'));
         if (selectedProductKey !== 'KUR' && multipliers[selectedProductKey]) {
+          b = b * multipliers[selectedProductKey].mAl;
           s = s * multipliers[selectedProductKey].mSat;
         }
+        if (b > 0) dayBuyVals.push(b);
         if (s > 0) daySellVals.push(s);
       });
 
+      const minBuy = dayBuyVals.length ? Math.min(...dayBuyVals) : currentBuy;
+      const maxBuy = dayBuyVals.length ? Math.max(...dayBuyVals) : currentBuy;
       const minSell = daySellVals.length ? Math.min(...daySellVals) : currentSell;
       const maxSell = daySellVals.length ? Math.max(...daySellVals) : currentSell;
 
@@ -971,9 +954,50 @@ $(document).ready(function() {
           <span><strong>Alış:</strong> ${fmt(currentBuy)} TL</span>
           <span><strong>Satış:</strong> ${fmt(currentSell)} TL</span>
           <span><strong>Makas:</strong> ${fmt(makasTl)} TL (%${makasOran})</span>
-          <span><strong>Gün İçi En Düşük Satış:</strong> ${fmt(minSell)} TL</span>
-          <span><strong>Gün İçi En Yüksek Satış:</strong> ${fmt(maxSell)} TL</span>
+          <span><strong>En Düşük (A/S):</strong> ${fmt(minBuy)} / ${fmt(minSell)} TL</span>
+          <span><strong>En Yüksek (A/S):</strong> ${fmt(maxBuy)} / ${fmt(maxSell)} TL</span>
         `;
+      }
+
+      const schemaScript = document.getElementById('schemaJSON');
+      if (schemaScript) {
+        const schemaData = {
+          "@context": "https://schema.org",
+          "@type": "FinancialProduct",
+          "name": pageTitleText,
+          "description": descText,
+          "category": "Gold Market / Currency Archive",
+          "url": window.location.href,
+          "provider": {
+            "@type": "LocalBusiness",
+            "name": `${currentCityDisplayName} Altın Fiyatları`,
+            "url": `https://${currentCitySlug}.sarrafiye.net`
+          },
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "TRY",
+            "lowPrice": Math.round(minBuy),
+            "highPrice": Math.round(maxSell),
+            "offerCount": daySlice.length || 1,
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": `${cardProdName} Alış`,
+                "price": Math.round(currentBuy),
+                "priceCurrency": "TRY",
+                "validFrom": `${targetDateIso}T00:00:00Z`
+              },
+              {
+                "@type": "Offer",
+                "name": `${cardProdName} Satış`,
+                "price": Math.round(currentSell),
+                "priceCurrency": "TRY",
+                "validFrom": `${targetDateIso}T00:00:00Z`
+              }
+            ]
+          }
+        };
+        schemaScript.textContent = JSON.stringify(schemaData, null, 2);
       }
     }
 
@@ -1154,14 +1178,17 @@ $(document).ready(function() {
         return (currentRange === 'today' && s) ? s : (s ? `${d} ${s}` : d);
       });
 
+      let alisData = [];
       let satisData = [];
       if (selectedProductKey === 'KUR') {
-        chartDisplayTitle = `KUR Satış Fiyatı Grafiği`;
+        chartDisplayTitle = `KUR Fiyat Trend Grafiği`;
+        alisData = sliceData.map(item => parseFloat(String(item.alis || item.buy || item.Alis || 0).replace(',', '.')));
         satisData = sliceData.map(item => parseFloat(String(item.satis || item.sell || item.Satis || 0).replace(',', '.')));
       } else {
         const selectedProd = multipliers[selectedProductKey];
         if (!selectedProd) return;
-        chartDisplayTitle = `${selectedProd.name} Satış Fiyatı Grafiği`;
+        chartDisplayTitle = `${selectedProd.name} Fiyat Trend Grafiği`;
+        alisData = sliceData.map(item => parseFloat(String(item.alis || item.buy || item.Alis || 0).replace(',', '.')) * selectedProd.mAl);
         satisData = sliceData.map(item => parseFloat(String(item.satis || item.sell || item.Satis || 0).replace(',', '.')) * selectedProd.mSat);
       }
       if(chartTitle) chartTitle.innerText = chartDisplayTitle;
@@ -1178,9 +1205,19 @@ $(document).ready(function() {
               data: satisData,
               borderColor: '#d97706',
               backgroundColor: 'rgba(217, 119, 6, 0.1)',
-              borderWidth: 2.5,
+              borderWidth: 2,
               fill: true,
-              tension: 0.15,
+              tension: 0.3,
+              pointRadius: sliceData.length > 90 ? 0 : 3
+            },
+            {
+              label: `Alış (TL)`,
+              data: alisData,
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.3,
               pointRadius: sliceData.length > 90 ? 0 : 3
             }
           ]
@@ -1189,11 +1226,11 @@ $(document).ready(function() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: false },
+            legend: { position: 'top', labels: { color: '#fff', font: { size: 10 } } },
             tooltip: { 
               mode: 'index', 
               intersect: false,
-              callbacks: { label: function(context) { return `Satış: ${fmt(context.raw)} TL`; } }
+              callbacks: { label: function(context) { return `${context.dataset.label}: ${fmt(context.raw)} TL`; } }
             }
           },
           scales: {
