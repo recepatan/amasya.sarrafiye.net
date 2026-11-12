@@ -593,7 +593,7 @@ $(document).ready(function() {
     let socketSettings = {};
     let priceChart = null;
     let currentRecordIndex = -1;
-    let currentRange = 'today';
+    let currentRange = 'month'; // Varsayılan olarak son 15 günlük (1A butonuna denk gelen veya özel aralık) görünüm
     let selectedProductKey = 'KUR';
     let socket = null;
     window.isLiveSocketActive = false;
@@ -747,7 +747,7 @@ $(document).ready(function() {
 
         if (urlParams.tip === 'canli') {
           window.isLiveSocketActive = true;
-          currentRange = 'month'; // Canlı modda varsayılan olarak son 30 günlük veriyi getir
+          currentRange = 'month'; // 15 günlük görünüm için aktif tutuyoruz
           document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
           const monthBtn = Array.from(document.querySelectorAll('.time-btn')).find(b => b.getAttribute('onclick')?.includes('month'));
           if (monthBtn) monthBtn.classList.add('active');
@@ -821,7 +821,7 @@ $(document).ready(function() {
       var lastItem = archiveData[archiveData.length - 1];
       var currentDate = lastItem ? normalizeToISO(lastItem.tarih || lastItem.date || lastItem.Tarih) : new Date().toISOString().split('T')[0];
 
-      // Gelen canlı veriyi arşiv dizisinin sonuna yeni kayıt olarak ekle (30 günlük verinin üzerine eklenmeye devam eder)
+      // Yeni canlı veriyi diziye ekle
       var newRecord = {
         tarih: currentDate,
         saat: timeStr,
@@ -831,9 +831,31 @@ $(document).ready(function() {
       archiveData.push(newRecord);
       currentRecordIndex = archiveData.length - 1;
 
-      // Tabloları ve grafiği güncelle
       updateTablesOnly(h_al, h_sat);
-      renderChart();
+
+      // Grafik nesnesi varsa, sıfırdan oluşturmak yerine (destroy etmeden) veriyi akıcı şekilde ekleyip güncelliyoruz
+      if (priceChart && priceChart.data && priceChart.data.datasets.length >= 2) {
+        const selectedProd = selectedProductKey === 'KUR' ? null : multipliers[selectedProductKey];
+        const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
+        const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
+
+        const labelStr = (currentRange === 'today') ? timeStr : `${currentDate} ${timeStr}`;
+
+        priceChart.data.labels.push(labelStr);
+        priceChart.data.datasets[0].data.push(calcSatis); // Satış
+        priceChart.data.datasets[1].data.push(calcAlis);  // Alış
+
+        // Aşırı şişmeyi önlemek için sınırlandırma
+        if (priceChart.data.labels.length > 1000) {
+          priceChart.data.labels.shift();
+          priceChart.data.datasets[0].data.shift();
+          priceChart.data.datasets[1].data.shift();
+        }
+
+        priceChart.update('none'); // Sıfırlamadan (yeniden çizmeden) anlık ve titreşimsiz güncelleme
+      } else {
+        renderChart();
+      }
 
       updatePageSEO(currentDate, timeStr, h_al, h_sat);
     }
@@ -1156,7 +1178,7 @@ $(document).ready(function() {
       } else {
         let dayLimit = 0;
         if (currentRange === 'week') dayLimit = 7;
-        else if (currentRange === 'month') dayLimit = 30;
+        else if (currentRange === 'month') dayLimit = 15; // 30 gün yerine 15 gün olarak güncellendi
         else if (currentRange === 'year') dayLimit = 365;
         
         if (currentRange === 'all' || dayLimit === 0) {
