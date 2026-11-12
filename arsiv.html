@@ -676,11 +676,10 @@ $(document).ready(function() {
       return [`${year}-${month}-${day}`, `${day}.${month}.${year}`, `${day}-${month}-${year}`, `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`];
     }
 
-    // Dar aralıklı anlık fiyat dalgalanmalarını (1-2 TL veya 10-20 TL) net gösterecek dinamik Y ekseni odaklaması
-    function getDynamicLiveYAxisConfig() {
+    // Y eksenini anlık en düşük ve en yüksek fiyat aralığına tam oturtan ve 1-2 TL'lik değişimleri belirginleştiren ölçek
+    function getTightZoomYAxisConfig() {
       return {
         grid: { color: 'rgba(255,255,255,0.1)' },
-        // Sabit geniş grace yerine, verilerin min/max değerine göre dar bir pencere bırakır
         ticks: {
           color: '#ccc',
           font: { size: 10 },
@@ -814,7 +813,7 @@ $(document).ready(function() {
               backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
-              tension: 0.2,
+              tension: 0.15,
               pointRadius: 2
             },
             {
@@ -824,7 +823,7 @@ $(document).ready(function() {
               backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
-              tension: 0.2,
+              tension: 0.15,
               pointRadius: 2
             }
           ]
@@ -842,7 +841,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getDynamicLiveYAxisConfig()
+            y: getTightZoomYAxisConfig()
           }
         }
       });
@@ -851,7 +850,7 @@ $(document).ready(function() {
 
     function connectSocket() {
       if (socket) { socket.off(); socket.disconnect(); }
-      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlem1sdGluLmNvbTo0NDM=");
+      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlbWFsdGluLmNvbTo0NDM=");
       socket = io.connect(_u, { "transports": ["websocket"] });
       socket.on('price_changes', function(rec_data) { handleLiveSocketData(rec_data); });
       socket.on('price_changed', function(rec_data) { handleLiveSocketData(rec_data); });
@@ -901,6 +900,16 @@ $(document).ready(function() {
         priceChart.data.labels.shift();
         priceChart.data.datasets[0].data.shift();
         priceChart.data.datasets[1].data.shift();
+      }
+
+      // Aktif veri setine göre Y eksenini otomatik sıkılaştırıp dalgalanmaları belirginleştir
+      const allValues = [...priceChart.data.datasets[0].data, ...priceChart.data.datasets[1].data];
+      if (allValues.length > 0) {
+        const minVal = Math.min(...allValues);
+        const maxVal = Math.max(...allValues);
+        const padding = Math.max(2, (maxVal - minVal) * 0.2); // Çok dar aralıkta bile nefes payı bırakır
+        priceChart.options.scales.y.min = Math.floor(minVal - padding);
+        priceChart.options.scales.y.max = Math.ceil(maxVal + padding);
       }
 
       priceChart.update('none');
@@ -1213,7 +1222,7 @@ $(document).ready(function() {
               backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
-              tension: 0.2,
+              tension: 0.15,
               pointRadius: sliceData.length > 90 ? 0 : 2
             },
             {
@@ -1223,7 +1232,7 @@ $(document).ready(function() {
               backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
-              tension: 0.2,
+              tension: 0.15,
               pointRadius: sliceData.length > 90 ? 0 : 2
             }
           ]
@@ -1241,7 +1250,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getDynamicLiveYAxisConfig()
+            y: getTightZoomYAxisConfig()
           }
         }
       });
