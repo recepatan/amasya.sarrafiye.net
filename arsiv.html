@@ -194,7 +194,6 @@
   .left-column:fullscreen .fullscreen-product-select-wrapper, .left-column:-webkit-full-screen .fullscreen-product-select-wrapper, .left-column:-moz-full-screen .fullscreen-product-select-wrapper { display: flex !important; align-items: center; gap: 6px; }
   .left-column:fullscreen .chart-box, .left-column:-webkit-full-screen .chart-box, .left-column:-moz-full-screen .chart-box { flex: 1; min-height: 0; }
 
-  /* Footer Alanı Entegre ve Sabit Sıkıştırılmış */
   .mobile-footer {
     flex-shrink: 0;
     display: block;
@@ -800,24 +799,62 @@ $(document).ready(function() {
       var h_al = alis - socketSettings.fal;
       var h_sat = satis + socketSettings.fsat;
 
-      var lastIdx = archiveData.length - 1;
-      archiveData[lastIdx].alis = h_al;
-      archiveData[lastIdx].satis = h_sat;
-
+      var timeStr = "00:00:00";
       if (rec_data.meta && rec_data.meta.time) {
         var d = new Date(rec_data.meta.time);
         var f = function(n) { return n < 10 ? '0' + n : n; };
-        archiveData[lastIdx].saat = f(d.getHours()) + ':' + f(d.getMinutes()) + ':' + f(d.getSeconds());
-        var z = document.getElementById('fiyat_zaman_doviz');
-        if(z) z.innerText = archiveData[lastIdx].saat;
+        timeStr = f(d.getHours()) + ':' + f(d.getMinutes()) + ':' + f(d.getSeconds());
+      } else {
+        var now = new Date();
+        var f = function(n) { return n < 10 ? '0' + n : n; };
+        timeStr = f(now.getHours()) + ':' + f(now.getMinutes()) + ':' + f(now.getSeconds());
+      }
+      
+      var z = document.getElementById('fiyat_zaman_doviz');
+      if(z) z.innerText = timeStr;
+
+      var lastItem = archiveData[archiveData.length - 1];
+      var currentDate = lastItem ? normalizeToISO(lastItem.tarih || lastItem.date || lastItem.Tarih) : new Date().toISOString().split('T')[0];
+
+      // Her yeni canlı veride yeni bir kayıt noktası (yeni grafik noktası) oluştur ve ekle
+      var newRecord = {
+        tarih: currentDate,
+        saat: timeStr,
+        alis: h_al,
+        satis: h_sat
+      };
+      archiveData.push(newRecord);
+      currentRecordIndex = archiveData.length - 1;
+
+      // Tabloları güncelle
+      updateTablesOnly(h_al, h_sat);
+
+      // Grafiği sıfırdan kurmak yerine mevcut çizgiye yeni noktayı akıcı şekilde ekle (Append)
+      if (priceChart && currentRange === 'today') {
+        const selectedProd = selectedProductKey === 'KUR' ? null : multipliers[selectedProductKey];
+        const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
+        const calcSatis = selectedProd ? h_sat * selectedProd.mSat : h_sat;
+
+        priceChart.data.labels.push(timeStr);
+        priceChart.data.datasets[0].data.push(calcSatis); // Satış (Index 0)
+        priceChart.data.datasets[1].data.push(calcAlis);  // Alış (Index 1)
+
+        // Performans koruması için çok fazla nokta biriktiğinde (örn. 500+) eskiyi kaydır
+        if (priceChart.data.labels.length > 500) {
+          priceChart.data.labels.shift();
+          priceChart.data.datasets[0].data.shift();
+          priceChart.data.datasets[1].data.shift();
+        }
+
+        priceChart.update('none'); // Titreşimsiz, akıcı güncelleme
+      } else {
+        renderChart();
       }
 
-      if (currentRecordIndex === lastIdx) {
-        updateTablesAndChart(h_al, h_sat);
-      }
+      updatePageSEO(currentDate, timeStr, h_al, h_sat);
     }
 
-    function updateTablesAndChart(rawBuy, rawSell) {
+    function updateTablesOnly(rawBuy, rawSell) {
       marketTableBody.innerHTML = '';
       productTableBody.innerHTML = '';
       
@@ -846,6 +883,10 @@ $(document).ready(function() {
         tr.addEventListener('click', () => selectProduct(key));
         productTableBody.appendChild(tr);
       });
+    }
+
+    function updateTablesAndChart(rawBuy, rawSell) {
+      updateTablesOnly(rawBuy, rawSell);
       renderChart();
     }
 
