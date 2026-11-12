@@ -66,7 +66,7 @@
   .chart-box{background:rgba(255, 255, 255, 0.03);border:2px solid var(--main);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;flex:1;min-height:300px;}
   .table-container-box{background:rgba(255, 255, 255, 0.03);border:2px solid var(--main);border-radius:8px;padding:6px;display:flex;flex-direction:column;flex:1;overflow:hidden;}
   
-  /* Çakışmayı önleyen güvenli dikey orta reklam konteynırı (kutu2) */
+  /* kutu2 reklam alanı */
   .ad-column-middle {
     position: relative;
     border-radius: 8px;
@@ -97,7 +97,7 @@
     }
   }
 
-  /* Tablolar arasına taşınan mobile-2 reklam konteynırı */
+  /* mobile-2 reklamı (Tablolar arası) */
   .ad-between-tables {
     position: relative;
     border-radius: 8px;
@@ -112,23 +112,29 @@
   .ad-between-tables:empty {
     display: none !important;
   }
-  @media (min-width: 769px) {
-    .ad-between-tables:not(:empty) {
-      border: 1px solid var(--border);
-      background-color: #111827;
-      padding: 4px;
-    }
+  .ad-between-tables:not(:empty) {
+    border: 1px solid var(--border);
+    background-color: #111827;
+    padding: 4px;
   }
 
+  /* mobile-3 reklamı (Genel / Masaüstünde de aktif) */
   .mobile-extra-ad {
     width: 100%;
-    margin: 4px 0;
+    margin: 6px 0;
     display: flex;
     justify-content: center;
     flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
   }
   .mobile-extra-ad:empty {
     display: none !important;
+  }
+  .mobile-extra-ad:not(:empty) {
+    border: 1px solid var(--border);
+    background-color: #111827;
+    padding: 6px;
   }
 
   .ayar-table,.has-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--main);border-radius:6px;overflow:hidden;font-weight:bold;table-layout:fixed;flex:1;}
@@ -412,10 +418,10 @@ $(document).ready(function() {
                 </article>
             </div>
             
-            <!-- 2. ALAN: Dikey Orta Reklam Alanı (reklam.json: ad_kutu2) - Reklam yoksa gizli kalır -->
+            <!-- 2. ALAN: Dikey Orta Reklam Alanı (reklam.json: ad_kutu2) -->
             <div class="ad-column-middle" id="ad-slot-kutu2"></div>
 
-            <!-- 3. ALAN: Kur ve Ürünler Tabloları (ad-slot-mobile-2 iki tablonun arasında) -->
+            <!-- 3. ALAN: Kur ve Ürünler Tabloları (ad-slot-mobile-2 iki tablonun arasında ve artık masaüstünde de görünür) -->
             <div class="right-column">
                 <div class="table-container-box" style="flex: 0 0 auto;">
                     <table class="has-table">
@@ -424,7 +430,6 @@ $(document).ready(function() {
                     </table>
                 </div>
 
-                <!-- Önceki kutu2 reklamının yerine taşınan mobile-2 reklam alanı -->
                 <div class="ad-between-tables" id="ad-slot-mobile-2"></div>
 
                 <div class="table-container-box" style="flex: 1;">
