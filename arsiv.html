@@ -64,13 +64,15 @@
   #tarih_alan{font-size:clamp(11px, 1.1vw, 14px);font-weight:bold;color:white;}
   #fiyat_zaman_doviz{font-size:clamp(13px, 1.4vw, 17px);font-weight:bold;color:var(--border);}
   
-  /* Grafik İçi Yanıp Sönen Uyarı Alanı */
+  /* Grafik Üstü Yanıp Sönen Uyarı Alanı */
   .chart-notice-blink {
     font-size: clamp(10px, 0.9vw, 12px);
     font-weight: bold;
     color: var(--border);
     animation: blinker 1.2s linear infinite;
     text-align: center;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .chart-notice-blink a {
     color: #ffffff;
@@ -394,6 +396,10 @@ $(document).ready(function() {
                 <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
                 <div class="left-column">
                     <div class="chart-box">
+                        <!-- Grafik başlığının üstünde yanıp sönen uyarı alanı -->
+                        <div class="chart-notice-blink">
+                            Arşiv ekranındasınız! Canlı ekran için <a href="/">tıklayınız</a>.
+                        </div>
                         <div class="chart-header">
                             <div class="chart-title" id="chartTitle">Fiyat Trend Grafiği</div>
                             <div class="time-filter-group">
@@ -404,10 +410,6 @@ $(document).ready(function() {
                                 <button class="time-btn" onclick="setChartRange('all', event)">5Y</button>
                                 <button class="time-btn" onclick="toggleFullScreen()" title="Tam Ekran Yap/Çık"><i class="bi bi-arrows-fullscreen"></i></button>
                             </div>
-                        </div>
-                        <!-- Grafik içinde yanıp sönen uyarı alanı -->
-                        <div class="chart-notice-blink">
-                            Arşivdesiniz. Canlı ekran için <a href="/">tıklayın</a>.
                         </div>
                         <div class="chart-container">
                             <canvas id="priceChart"></canvas>
