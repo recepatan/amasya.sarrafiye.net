@@ -64,27 +64,20 @@
   #tarih_alan{font-size:clamp(11px, 1.1vw, 14px);font-weight:bold;color:white;}
   #fiyat_zaman_doviz{font-size:clamp(13px, 1.4vw, 17px);font-weight:bold;color:var(--border);}
   
-  /* Arşiv Bilgi ve Canlıya Dönüş Barı */
-  .archive-notice-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(217, 119, 6, 0.15);
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: clamp(10px, 0.85vw, 12px);
-    color: #fff;
-    flex-shrink: 0;
-  }
-  .archive-notice-bar a {
-    color: var(--border);
+  /* Grafik İçi Yanıp Sönen Uyarı Alanı */
+  .chart-notice-blink {
+    font-size: clamp(10px, 0.9vw, 12px);
     font-weight: bold;
-    text-decoration: underline;
-    margin-left: 4px;
+    color: var(--border);
+    animation: blinker 1.2s linear infinite;
+    text-align: center;
   }
-  .archive-notice-bar a:hover {
+  .chart-notice-blink a {
     color: #ffffff;
+    text-decoration: underline;
+  }
+  .chart-notice-blink a:hover {
+    color: var(--border);
   }
 
   /* Ana içerik ve esnek flex yapılandırması (Viewport tabanlı) */
@@ -400,11 +393,6 @@ $(document).ready(function() {
             <div class="layout-wrapper">
                 <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
                 <div class="left-column">
-                    <!-- Ziyaretçiyi Uyaran Arşiv / Canlı Ekran Uyarı Barı -->
-                    <div class="archive-notice-bar">
-                        <span>Şu an arşiv sayfasındasınız. Anlık fiyatlar için <a href="/">canlı ekrana tıklayın</a>.</span>
-                    </div>
-                    
                     <div class="chart-box">
                         <div class="chart-header">
                             <div class="chart-title" id="chartTitle">Fiyat Trend Grafiği</div>
@@ -416,6 +404,10 @@ $(document).ready(function() {
                                 <button class="time-btn" onclick="setChartRange('all', event)">5Y</button>
                                 <button class="time-btn" onclick="toggleFullScreen()" title="Tam Ekran Yap/Çık"><i class="bi bi-arrows-fullscreen"></i></button>
                             </div>
+                        </div>
+                        <!-- Grafik içinde yanıp sönen uyarı alanı -->
+                        <div class="chart-notice-blink">
+                            Arşivdesiniz. Canlı ekran için <a href="/">tıklayın</a>.
                         </div>
                         <div class="chart-container">
                             <canvas id="priceChart"></canvas>
@@ -1298,7 +1290,7 @@ $(document).ready(function() {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top', labels: { color: '#fff', font: { size: 10 } } },
+            legend: { display: false },
             tooltip: { 
               mode: 'index', 
               intersect: false,
