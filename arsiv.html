@@ -250,8 +250,6 @@
     background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     text-align: left;
-    display: flex;
-    flex-direction: column; /* İçeriğin alttan yukarıya esnemesi için */
   }
   .sarrafiye-bilesen-btn {
     width: 100%;
@@ -268,7 +266,6 @@
     justify-content: space-between;
     align-items: center;
     transition: background-color 0.2s ease;
-    order: 2; /* Butonu her zaman en alta sabitlemek için */
   }
   .sarrafiye-bilesen-btn:hover {
     background: rgba(255, 255, 255, 0.15);
@@ -286,7 +283,6 @@
     overflow: hidden;
     transition: max-height 0.35s cubic-bezier(0, 1, 0, 1);
     background-color: rgba(0, 0, 0, 0.4);
-    order: 1; /* İçerik butonun üstünde (yukarıya doğru açılacak şekilde) konumlanır */
   }
   .sarrafiye-bilesen-links {
     list-style: none;
@@ -295,7 +291,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 3px 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Açıldığında butonla ayrım çizgisi */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
   .sarrafiye-bilesen-links a {
     color: #e5e7eb;
@@ -505,6 +501,11 @@ $(document).ready(function() {
   </div>
   
   <div class="sarrafiye-bilesen">
+    <button class="sarrafiye-bilesen-btn" id="sarrafiyeToggleBtn" onclick="toggleSarrafiyeBilesen()" aria-expanded="false" aria-controls="sarrafiyeContent">
+      <span>İllere Göre Altın Fiyatları</span>
+      <span class="sarrafiye-bilesen-icon">▼</span>
+    </button>
+
     <div class="sarrafiye-bilesen-content" id="sarrafiyeContent">
       <ul class="sarrafiye-bilesen-links">
         <li><a href="https://adana.sarrafiye.net" title="Adana Altın Fiyatları">Adana Altın Fiyatları</a></li>
@@ -522,11 +523,6 @@ $(document).ready(function() {
         <li><a href="https://van.sarrafiye.net" title="Van Altın Fiyatları">Van Altın Fiyatları</a></li>
       </ul>
     </div>
-
-    <button class="sarrafiye-bilesen-btn" id="sarrafiyeToggleBtn" onclick="toggleSarrafiyeBilesen()" aria-expanded="false" aria-controls="sarrafiyeContent">
-      <span>İllere Göre Altın Fiyatları</span>
-      <span class="sarrafiye-bilesen-icon">▼</span>
-    </button>
 
     <script>
       function toggleSarrafiyeBilesen() {
@@ -837,7 +833,7 @@ $(document).ready(function() {
 
     function connectSocket() {
       if (socket) { socket.off(); socket.disconnect(); }
-      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlem1hbHRpbi5jb206NDQz");
+      var _u = atob("d3NzOi8vaHJtc29ja2V0b25seS5oYXJlbWFsdGluLmNvbTo0NDM=");
       socket = io.connect(_u, { "transports": ["websocket"] });
       socket.on('price_changes', function(rec_data) { handleLiveSocketData(rec_data); });
       socket.on('price_changed', function(rec_data) { handleLiveSocketData(rec_data); });
