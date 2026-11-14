@@ -20,7 +20,7 @@
 <meta name="twitter:domain" id="twitterDomain" content="sarrafiye.net"/>
 <meta name="twitter:description" id="twitterDescription" content="Kuyumcu esnafından derlenen altın fiyatları arşivi için web sitemizi ziyaret edebilirsiniz."/>
 
-<!-- AI & GEO Engine Structured Data (Schema.org JSON-LD) -->
+<!-- AI & GEO Engine Structured Data (Schema.org JSON-LD & OpenGraph Microdata Optimization) -->
 <script type="application/ld+json" id="schemaJSON">
 {
   "@context": "https://schema.org",
@@ -373,7 +373,7 @@ $(document).ready(function() {
 
     <div class="main-content">
         <div id="status" class="status-msg">Veriler ve arşiv yükleniyor...</div>    
-        <div id="results" style="display: none; width: 100%; height: 100%; flex-direction: column; min-height:0;">      
+        <div id="results" style="display: none; width: 100%; height: 100%; flex-direction: column; min-height:0;" itemscope itemtype="https://schema.org/FinancialData">      
             <div class="layout-wrapper">
                 <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
                 <div class="left-column">
@@ -400,25 +400,25 @@ $(document).ready(function() {
                         </div>          
                         <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
                             <div class="modern-date-container">
-                                <input type="date" id="datePicker" disabled />
+                                <input type="date" id="datePicker" aria-label="Arşiv Tarihi Seçimi" disabled />
                                 <div class="date-display-btn" id="dateDisplayBtn">
                                     <span id="dateTextValue">Seçiniz</span>
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                                 </div>
                             </div>
-                            <select id="timeSelect" style="background:#ffffff; border:1px solid var(--border); color:#000; padding:2px 5px; border-radius:4px; font-size:clamp(10px, 0.85vw, 12px); font-weight:bold; cursor:pointer;" disabled>
+                            <select id="timeSelect" aria-label="Arşiv Saati Seçimi" style="background:#ffffff; border:1px solid var(--border); color:#000; padding:2px 5px; border-radius:4px; font-size:clamp(10px, 0.85vw, 12px); font-weight:bold; cursor:pointer;" disabled>
                                 <option value="">Saat</option>
                             </select>
                             <div class="fullscreen-product-select-wrapper">
-                                <select id="fullscreenProductSelect" style="background:#ffffff; border:1px solid var(--border); color:#000; padding:2px 5px; border-radius:4px; font-size:clamp(10px, 0.85vw, 12px); font-weight:bold; cursor:pointer;">
+                                <select id="fullscreenProductSelect" aria-label="Tam Ekran Ürün Seçimi" style="background:#ffffff; border:1px solid var(--border); color:#000; padding:2px 5px; border-radius:4px; font-size:clamp(10px, 0.85vw, 12px); font-weight:bold; cursor:pointer;">
                                     <option value="KUR">Altın</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <article class="seo-info-card" id="seoInfoCard">
-                        <h2 id="seoCardTitle">📌 Kuyumcu Piyasası ve Altın Arşivi</h2>
-                        <p id="seoCardContent">Kuyumcu esnafından ve serbest piyasa dinamiklerinden derlenen altın fiyatları arşivi...</p>
+                    <article class="seo-info-card" id="seoInfoCard" itemscope itemtype="https://schema.org/Article">
+                        <h2 id="seoCardTitle" itemprop="headline">📌 Kuyumcu Piyasası ve Altın Arşivi</h2>
+                        <p id="seoCardContent" itemprop="description">Kuyumcu esnafından ve serbest piyasa dinamiklerinden derlenen altın fiyatları arşivi...</p>
                         <div class="seo-stats-badge" id="seoStatsBadge">
                           <span><strong>Alış:</strong> -- TL</span>
                           <span><strong>Satış:</strong> -- TL</span>
@@ -435,8 +435,14 @@ $(document).ready(function() {
                 <!-- 3. ALAN: Kur ve Ürünler Tabloları -->
                 <div class="right-column">
                     <div class="table-container-box" style="flex: 0 0 auto;">
-                        <table class="has-table">
-                            <thead><tr><th>KUR</th><th>ALIŞ</th><th>SATIŞ</th></tr></thead>
+                        <table class="has-table" aria-label="Döviz ve Kur Fiyatları Tablosu">
+                            <thead>
+                                <tr>
+                                    <th scope="col">KUR</th>
+                                    <th scope="col">ALIŞ</th>
+                                    <th scope="col">SATIŞ</th>
+                                </tr>
+                            </thead>
                             <tbody id="marketTableBody"></tbody>
                         </table>
                     </div>
@@ -444,8 +450,14 @@ $(document).ready(function() {
                     <div class="ad-between-tables" id="ad-slot-mobile-2"></div>
 
                     <div class="table-container-box" style="flex: 1;">
-                        <table class="ayar-table">
-                            <thead><tr><th>ÜRÜNLER</th><th>ALIŞ (TL)</th><th>SATIŞ (TL)</th></tr></thead>
+                        <table class="ayar-table" aria-label="Altın Ürünleri ve Fiyatları Tablosu">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ÜRÜNLER</th>
+                                    <th scope="col">ALIŞ (TL)</th>
+                                    <th scope="col">SATIŞ (TL)</th>
+                                </tr>
+                            </thead>
                             <tbody id="productTableBody"></tbody>
                         </table>
                     </div>
@@ -458,16 +470,16 @@ $(document).ready(function() {
 <!-- %100 ALANIN DIŞINDA KALAN REKLAM VE FOOTER ALANLARI (Aşağı kaydırınca görünür) -->
 <div class="mobile-extra-ad" id="ad-slot-mobile-3"></div>
 
-<footer class="mobile-footer">
+<footer class="mobile-footer" itemscope itemtype="https://schema.org/WPFooter">
   <p class="mobile-footer-seo" id="footerSeoText">
     <strong>Altın Fiyatları Arşivi:</strong> Geçmiş dönem gram altın, çeyrek, ziynet ve bilezik fiyatları değişim grafiklerini inceleyebilirsiniz.
   </p>
   <div class="mobile-footer-copy" id="footerCopyText">
-    © 2026 <a href="/" id="footerHomeLink" title="Altın Fiyatları" style="color:inherit; text-decoration:underline;">Altın Fiyatları</a> - Tüm Hakları Saklıdır.
+    © 2026 <a href="/" id="footerHomeLink" title="Altın Fiyatları" style="color:inherit; text-decoration:underline;" itemprop="url">Altın Fiyatları</a> - Tüm Hakları Saklıdır.
   </div>
   
   <div class="sarrafiye-bilesen">
-    <button class="sarrafiye-bilesen-btn" id="sarrafiyeToggleBtn" onclick="toggleSarrafiyeBilesen()">
+    <button class="sarrafiye-bilesen-btn" id="sarrafiyeToggleBtn" onclick="toggleSarrafiyeBilesen()" aria-expanded="false" aria-controls="sarrafiyeContent">
       <span>İllere Göre Altın Fiyatları</span>
       <span class="sarrafiye-bilesen-icon">▼</span>
     </button>
@@ -496,6 +508,8 @@ $(document).ready(function() {
         const content = document.getElementById('sarrafiyeContent');
         
         btn.classList.toggle('active');
+        const isActive = btn.classList.contains('active');
+        btn.setAttribute('aria-expanded', isActive);
         
         if (content.style.maxHeight && content.style.maxHeight !== '0px') {
           content.style.maxHeight = '0px';
@@ -563,7 +577,7 @@ $(document).ready(function() {
         footerHomeLink.innerText = `${currentCityDisplayName} Altın Fiyatları`;
       }
       if (footerCopyText) {
-        footerCopyText.innerHTML = `© 2026 <a href="/" title="${currentCityDisplayName} Altın Fiyatları" style="color:inherit; text-decoration:underline;">${currentCityDisplayName} Altın Fiyatları</a> (${currentCitySlug}.sarrafiye.net) - Tüm Hakları Saklıdır.`;
+        footerCopyText.innerHTML = `© 2026 <a href="/" title="${currentCityDisplayName} Altın Fiyatları" style="color:inherit; text-decoration:underline;" itemprop="url">${currentCityDisplayName} Altın Fiyatları</a> (${currentCitySlug}.sarrafiye.net) - Tüm Hakları Saklıdır.`;
       }
     });
 
@@ -604,7 +618,7 @@ $(document).ready(function() {
     let socketSettings = {};
     let priceChart = null;
     let currentRecordIndex = -1;
-    let currentRange = 'month'; // Varsayılan olarak son 15 günlük (1A butonuna denk gelen veya özel aralık) görünüm
+    let currentRange = 'month';
     let selectedProductKey = 'KUR';
     let socket = null;
     window.isLiveSocketActive = false;
@@ -758,7 +772,7 @@ $(document).ready(function() {
 
         if (urlParams.tip === 'canli') {
           window.isLiveSocketActive = true;
-          currentRange = 'month'; // 15 günlük görünüm için aktif tutuyoruz
+          currentRange = 'month';
           document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
           const monthBtn = Array.from(document.querySelectorAll('.time-btn')).find(b => b.getAttribute('onclick')?.includes('month'));
           if (monthBtn) monthBtn.classList.add('active');
@@ -832,7 +846,6 @@ $(document).ready(function() {
       var lastItem = archiveData[archiveData.length - 1];
       var currentDate = lastItem ? normalizeToISO(lastItem.tarih || lastItem.date || lastItem.Tarih) : new Date().toISOString().split('T')[0];
 
-      // Yeni canlı veriyi diziye ekle
       var newRecord = {
         tarih: currentDate,
         saat: timeStr,
@@ -844,7 +857,6 @@ $(document).ready(function() {
 
       updateTablesOnly(h_al, h_sat);
 
-      // Grafik nesnesi varsa, sıfırdan oluşturmak yerine (destroy etmeden) veriyi akıcı şekilde ekleyip güncelliyoruz
       if (priceChart && priceChart.data && priceChart.data.datasets.length >= 2) {
         const selectedProd = selectedProductKey === 'KUR' ? null : multipliers[selectedProductKey];
         const calcAlis = selectedProd ? h_al * selectedProd.mAl : h_al;
@@ -853,17 +865,16 @@ $(document).ready(function() {
         const labelStr = (currentRange === 'today') ? timeStr : `${currentDate} ${timeStr}`;
 
         priceChart.data.labels.push(labelStr);
-        priceChart.data.datasets[0].data.push(calcSatis); // Satış
-        priceChart.data.datasets[1].data.push(calcAlis);  // Alış
+        priceChart.data.datasets[0].data.push(calcSatis);
+        priceChart.data.datasets[1].data.push(calcAlis);
 
-        // Aşırı şişmeyi önlemek için sınırlandırma
         if (priceChart.data.labels.length > 1000) {
           priceChart.data.labels.shift();
           priceChart.data.datasets[0].data.shift();
           priceChart.data.datasets[1].data.shift();
         }
 
-        priceChart.update('none'); // Sıfırlamadan (yeniden çizmeden) anlık ve titreşimsiz güncelleme
+        priceChart.update('none');
       } else {
         renderChart();
       }
@@ -1189,7 +1200,7 @@ $(document).ready(function() {
       } else {
         let dayLimit = 0;
         if (currentRange === 'week') dayLimit = 7;
-        else if (currentRange === 'month') dayLimit = 15; // 30 gün yerine 15 gün olarak güncellendi
+        else if (currentRange === 'month') dayLimit = 15;
         else if (currentRange === 'year') dayLimit = 365;
         
         if (currentRange === 'all' || dayLimit === 0) {
