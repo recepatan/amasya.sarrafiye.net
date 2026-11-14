@@ -64,6 +64,29 @@
   #tarih_alan{font-size:clamp(11px, 1.1vw, 14px);font-weight:bold;color:white;}
   #fiyat_zaman_doviz{font-size:clamp(13px, 1.4vw, 17px);font-weight:bold;color:var(--border);}
   
+  /* Arşiv Bilgi ve Canlıya Dönüş Barı */
+  .archive-notice-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(217, 119, 6, 0.15);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: clamp(10px, 0.85vw, 12px);
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .archive-notice-bar a {
+    color: var(--border);
+    font-weight: bold;
+    text-decoration: underline;
+    margin-left: 4px;
+  }
+  .archive-notice-bar a:hover {
+    color: #ffffff;
+  }
+
   /* Ana içerik ve esnek flex yapılandırması (Viewport tabanlı) */
   .main-content{flex:1;display:flex;flex-direction:column;padding:4px 10px;gap:4px;max-width:1400px;margin:0 auto;width:100%;min-height:0;overflow:hidden;}
   .layout-wrapper{display:flex;gap:10px;width:100%;flex:1;min-height:0;align-items:stretch;}
@@ -377,6 +400,11 @@ $(document).ready(function() {
             <div class="layout-wrapper">
                 <!-- 1. ALAN: Grafik ve Altında Dinamik Bilgi Kartı -->
                 <div class="left-column">
+                    <!-- Ziyaretçiyi Uyaran Arşiv / Canlı Ekran Uyarı Barı -->
+                    <div class="archive-notice-bar">
+                        <span>Şu an arşiv sayfasındasınız. Anlık fiyatlar için <a href="/">canlı ekrana tıklayın</a>.</span>
+                    </div>
+                    
                     <div class="chart-box">
                         <div class="chart-header">
                             <div class="chart-title" id="chartTitle">Fiyat Trend Grafiği</div>
@@ -890,7 +918,7 @@ $(document).ready(function() {
       kurTr.className = 'kur-row';
       if (selectedProductKey === 'KUR') kurTr.classList.add('active-row');
       kurTr.innerHTML = `
-        <td style="font-weight: bold;">KUR</td>
+        <td style="font-weight: bold;" title="KUR">KUR</td>
         <td style="color:#2563eb; font-weight:bold;">${fmt(rawBuy)}</td>
         <td style="color:#d97706; font-weight:bold;">${fmt(rawSell)}</td>
       `;
@@ -904,7 +932,7 @@ $(document).ready(function() {
         const tr = document.createElement('tr');
         if (key === selectedProductKey) tr.classList.add('active-row');
         tr.innerHTML = `
-          <td style="font-weight: bold;">${item.name}</td>
+          <td style="font-weight: bold;" title="${item.name}">${item.name}</td>
           <td style="color:#2563eb; font-weight:bold;">${fmt(calculatedBuy)}</td>
           <td style="color:#d97706; font-weight:bold;">${fmt(calculatedSell)}</td>
         `;
