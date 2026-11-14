@@ -206,38 +206,38 @@
     padding: 6px 12px 8px 12px;
     margin-top: auto;
     text-align: center;
-    background: rgba(0, 0, 0, 0.4);
-    border-top: 1px solid var(--border);
-    color: #b0b3b8;
+    background: linear-gradient(180deg, var(--main) 0%, #000 100%);
+    border-top: 2px solid var(--border);
+    color: #ffffff;
     font-size: 10px;
     line-height: 1.2;
     width: 100%;
   }
   body:not(.dark-mode) .mobile-footer {
-    background: #f8f9fa;
-    border-top: 1px solid #dadce0;
-    color: #5f6368;
+    background: linear-gradient(180deg, var(--main) 0%, #000 100%);
+    border-top: 2px solid var(--border);
+    color: #ffffff;
   }
   .mobile-footer-seo { margin-bottom: 1px; }
   .mobile-footer-seo strong { color: var(--border); }
-  .mobile-footer-copy { font-size: 9px; font-weight: 600; opacity: 0.8; margin-bottom: 2px; }
+  .mobile-footer-copy { font-size: 9px; font-weight: 600; opacity: 0.9; margin-bottom: 2px; }
 
   .sarrafiye-bilesen {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     border-radius: 4px;
     overflow: hidden;
     max-width: 1200px;
-    margin: 2px auto 0 auto;
-    background-color: #ffffff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin: 4px auto 0 auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     text-align: left;
   }
   .sarrafiye-bilesen-btn {
     width: 100%;
-    padding: 3px 8px;
-    background-color: #f8f9fa;
-    color: #333333;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
     font-size: 11px;
     font-weight: 600;
     border: none;
@@ -250,10 +250,11 @@
     transition: background-color 0.2s ease;
   }
   .sarrafiye-bilesen-btn:hover {
-    background-color: #f1f3f5;
+    background: rgba(255, 255, 255, 0.15);
   }
   .sarrafiye-bilesen-icon {
     font-size: 9px;
+    color: var(--border);
     transition: transform 0.3s ease;
   }
   .sarrafiye-bilesen-btn.active .sarrafiye-bilesen-icon {
@@ -263,26 +264,26 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.35s cubic-bezier(0, 1, 0, 1);
-    background-color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.4);
   }
   .sarrafiye-bilesen-links {
     list-style: none;
-    padding: 4px 8px;
+    padding: 6px 8px;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 2px 6px;
-    border-top: 1px solid #eeeeee;
+    gap: 3px 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
   .sarrafiye-bilesen-links a {
-    color: #495057;
+    color: #e5e7eb;
     text-decoration: none;
     font-size: 11px;
     display: block;
     transition: color 0.2s ease;
   }
   .sarrafiye-bilesen-links a:hover {
-    color: #d4af37;
+    color: var(--border);
     text-decoration: underline;
   }
 </style>
